@@ -1,8 +1,9 @@
+#!/usr/bin/python
 from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler, Stream
 import datetime, os, errno, argparse, json
 # grab twitter auth tokens from external file
-from tw_tokens import tokens
+from tokens import *
 import time
 
 
@@ -15,10 +16,6 @@ def mkdir_p(path):
         else:
             raise
 
-# Go to http://dev.twitter.com and create an app.
-# The consumer key and secret will be generated for you after
-consumer_key = "puvoiy6Sb0o3RWK7GOIDVg"
-consumer_secret = "twgrBYX8K3mzVK6UwY2TfVUBtUVBtJrCzQKHo6c40"
 
 # After the step above, you will be redirected to your app's page.
 # Create an access token under the the "Your access token" section
@@ -53,17 +50,21 @@ class StdOutListener(StreamListener):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Stream from Twitter')
-    parser.add_argument('--lang', '-l', default='')
-    parser.add_argument('--track')
-    parser.add_argument('--token', default='0')
-    parser.add_argument('--size', default=1000)
-    parser.add_argument('--folder', '-f')
+    argparser = argparse.ArgumentParser(description='Stream from Twitter')
+    argparser.add_argument('--lang',  default='', help='language code, comma sep (ie en,jp)')
+    argparser.add_argument('--token', default='0', help='token to use', type=int)
+    argparser.add_argument('--size', default=1000, help='size of filesize batch', type=int)
+    argparser.add_argument('--geo', default='', help='geo bounding box, comma sep, long,lat,long,lat')
+    argparser.add_argument('--track', default='', help='words to track, comma sep')
+    argparser.add_argument('--folder', required=True, help='folder name to place tweets')
 
-    args = parser.parse_args()
+    args = argparser.parse_args()
 
-    print args.lang
-    access_token, access_token_secret = tokens[int(args.token)]
+    if len(args.geo)>0: geo = map(float,args.geo.split(','))
+    else: geo = ''
+#    if len(args.track)>0: track = args.track
+#    else: track = ''
+    access_token, access_token_secret = tokens[args.token]
     auth = OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(access_token, access_token_secret)
 
@@ -71,4 +72,5 @@ if __name__ == '__main__':
 
     l = StdOutListener()
     stream = Stream(auth, l)
-    stream.filter(track=[args.track], languages=[args.lang])
+    stream.filter( languages=[args.lang],locations=geo)
+    #stream.filter(track=[args.track], languages=[args.lang],locations=geo)

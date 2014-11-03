@@ -1,3 +1,9 @@
+
+# Go to http://dev.twitter.com and create an app.
+# The consumer key and secret will be generated for you after
+consumer_key = "puvoiy6Sb0o3RWK7GOIDVg"
+consumer_secret = "twgrBYX8K3mzVK6UwY2TfVUBtUVBtJrCzQKHo6c40"
+
 tokens = [( "716218291-61TvTuSGSnVQhOLUctdnW9U8brGJKetMxJfPTW3D",
 			"1yZHN5H692qzMwx4YsL3SUshhMRJ5BGtTljsCXa34JeVD"),
 			("2249861191-no2GNyANOMz3SyhcILB51NHoH1dxneYFUGem8v8",
