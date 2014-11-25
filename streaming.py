@@ -35,12 +35,12 @@ class StdOutListener(StreamListener):
     def on_data(self, data):
         js = json.loads(data.decode('utf-8'))
         if 'text' in js:
-            print js['text']
+            print self.counter, js['text']
             self.tweets.append(data)
             self.counter += 1
             if self.counter > int(self.size):
                 with open(self.folder + '/' + str(time.time()).split(".")[0], 'a') as f:
-                    f.write(',\n'.join(self.tweets).encode('UTF-8'))
+                    f.write('\n'.join(self.tweets).encode('UTF-8'))
                     self.counter = 0
                     del self.tweets[:]
         return True
@@ -51,12 +51,18 @@ class StdOutListener(StreamListener):
 
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser(description='Stream from Twitter')
-    argparser.add_argument('--lang',  default='', help='language code, comma sep (ie en,jp)')
-    argparser.add_argument('--token', default='0', help='token to use', type=int)
-    argparser.add_argument('--size', default=1000, help='size of filesize batch', type=int)
-    argparser.add_argument('--geo', default='', help='geo bounding box, comma sep, long,lat,long,lat')
-    argparser.add_argument('--track', default='', help='words to track, comma sep')
-    argparser.add_argument('--folder', required=True, help='folder name to place tweets')
+    argparser.add_argument('--lang',  default='', 
+            help='language code, comma sep (ie en,jp)')
+    argparser.add_argument('--token', default='0', 
+            help='token to use', type=int)
+    argparser.add_argument('--size', default=1000, 
+            help='size of filesize batch', type=int)
+    argparser.add_argument('--geo', default='', 
+            help='geo bounding box, comma sep, long,lat,long,lat')
+    argparser.add_argument('--track', default='', 
+            help='words to track, comma sep')
+    argparser.add_argument('--folder', required=True, 
+            help='folder name to place tweets')
 
     args = argparser.parse_args()
 
@@ -72,5 +78,4 @@ if __name__ == '__main__':
 
     l = StdOutListener()
     stream = Stream(auth, l)
-    stream.filter( languages=[args.lang],locations=geo)
-    #stream.filter(track=[args.track], languages=[args.lang],locations=geo)
+    stream.filter(track=[args.track], languages=[args.lang],locations=geo)
